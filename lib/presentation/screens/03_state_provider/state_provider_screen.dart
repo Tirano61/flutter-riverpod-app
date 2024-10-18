@@ -10,6 +10,8 @@ class StateProviderScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     
     final counter = ref.watch(counterProvider);
+    final darkMode = ref.watch(isDarkModeProvider);
+    final rasndomName = ref.watch(randomNameProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -21,16 +23,17 @@ class StateProviderScreen extends ConsumerWidget {
             const Spacer(flex: 1,),
 
             IconButton(
-              // icon: const Icon( Icons.light_mode_outlined, size: 100 ),
-              icon: const Icon( Icons.dark_mode_outlined, size: 100 ),
-              onPressed: () {},
+              icon:  Icon(darkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined, size: 100 ),
+              onPressed: () {
+                ref.read(isDarkModeProvider.notifier).update((state) => !state);
+              },
             ),
 
-            const Text('Fernando Herrera', style: TextStyle(fontSize: 25 )),
+            Text(rasndomName, style: const TextStyle(fontSize: 25 )),
 
             TextButton.icon(
               icon: const Icon( Icons.add, size: 50,),
-              label: Text('$counter', style: TextStyle(fontSize: 100)),
+              label: Text('$counter', style: const TextStyle(fontSize: 100)),
               onPressed: () {
                 ref.read(counterProvider.notifier).update( (state) => state + 1 );
               },
@@ -43,7 +46,10 @@ class StateProviderScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         label: const Text('Nombre aleatorio'),
         icon: const Icon( Icons.refresh_rounded ),
-        onPressed: () {},
+        onPressed: () {
+          //! invalidate obliga a ejecutarse la funcion y cambiar el state 
+          ref.invalidate(randomNameProvider);
+        },
       ),
     );
   }
